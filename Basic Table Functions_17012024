@@ -1,0 +1,50 @@
+Source: The Definitive Guide to DAX, 2nd Edition.
+
+Table Functions return the table.
+
+1. Filter is a table function which filters the contents of the table based on a condition. 
+Sales Amount Multiple Items = 
+SUMX(
+    FILTER(
+        Sales,
+        Sales[Order Quantity]>1
+    ),
+    Sales[Order Quantity]*Sales[Unit Price]
+)
+In place of the physical table 'Sales', Filter function is used as a table reference. 
+
+2. Variables can store tables too. Modifying the above code to leverage the Variable functionality.
+Sales Amount Multiple Items(Variable) = 
+Var MultipleItems=                         --Stores a whole table whose Order Quantity>1 from the sales table, as it's expression is a table function.
+ FILTER(
+        Sales,
+        Sales[Order Quantity]>1
+    )
+RETURN
+SUMX(
+    MultipleItems,
+    Sales[Order Quantity]*Sales[Unit Price]
+)
+
+3. In a calculated column or an iterator function, RELATEDTABLE function could be used to retrieve the rows of the related table, as a table.
+
+Product Sales Amount = 
+SUMX(
+    RELATEDTABLE(Sales),
+    Sales[Order Quantity]*Sales[Unit Price]
+)
+
+Table Functions can be nested too. 
+For eg., the below calculated column calculates the Sales Amount for the table returned by Filter function(FILTER) which has filtered the rows of the related table(RELATEDTABLE) 
+based on the condition of Order Quantity placed greater than 1.
+
+Product Sales Amount MultipleItems = 
+SUMX(
+    FILTER(
+    RELATEDTABLE(Sales),
+    Sales[Order Quantity]>1
+    ),
+    Sales[Order Quantity]*Sales[Unit Price]
+)
+
+
